@@ -51,7 +51,76 @@ class Dekartforms_Admin {
 
 		$this->plugin_name = $plugin_name;
 		$this->version = $version;
+		
+		add_action( 'admin_menu', array($this,'my_admin_menu') );
 
+	}
+	
+	public function my_admin_menu() {
+		add_menu_page( 'Dekart Forms', 'Dekart Forms', 'manage_options', 'dekartforms', array($this,'dekartforms_router'), 'dashicons-tickets', 25  );
+	}
+
+	public function dekartforms_router(){
+		$task = filter_input(INPUT_GET, 'task', FILTER_SANITIZE_STRING);
+		
+		switch($task) {
+			case "add_form": 
+				echo 'add form'; 
+				break;
+			case "edit_form":
+				echo 'edit';
+				break;
+			case "delete_form":
+				echo 'delete';
+				break;
+			case "form_entries":
+				echo "entries";
+				break;
+			case "single_entry":
+				echo "single";
+				break;
+			case "delete_entry":
+				echo 'delete entry';
+				break;
+			default: 
+				$this->show_forms();
+		}
+	}	
+	
+	/**
+	 * Show form list
+	 *
+	 * @since    1.0.0
+	 */	
+	public function show_forms() {
+		
+		?>
+		<div class="wrap">
+			<h2>Forms</h2>
+			<table class="widefat" id="testme_admin_list">
+            <thead>
+                <tr>
+                    <th scope="col">ID</th>
+                    <th scope="col">Form</th>
+                    <th scope="col">Actions</th>
+                </tr>
+            </thead>
+            <tbody id="the-list">
+
+                <tr class="alternate">
+					<td>1</td>
+					<td>1</td>
+					<td>
+						<a href="">Entries</a> | 
+						<a href=""><span>Edit</a> | 
+						<a href=""><span>Delete</a>
+					</td>
+				</tr>
+            </tbody>
+        </table>
+		</div>
+		
+		<?php		
 	}
 
 	/**
