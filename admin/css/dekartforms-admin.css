@@ -2,3 +2,47 @@
  * All of the CSS for your admin-specific functionality should be
  * included in this file.
  */
+ul { list-style-type: none; margin: 0; padding: 0; margin-bottom: 10px;  }
+li { margin: 5px; padding: 5px; width: 150px; }
+ 
+.dekartFormTitle input{
+	width: 90%;
+	font-size: 25px;
+}
+
+.dekartFormDropField {
+	border: 1px solid #ccc;
+	min-height: 500px;
+	width: 90%;
+	margin-top: 15px;
+}
+
+.dekartFormDragField {
+	border: 1px solid #ccc;
+	min-height: 500px;
+	width: 100%;
+	margin-top: 15px;
+}
+
+.dragObject {
+	width: 100px;
+	height: 100px;
+	border: 1px solid red;
+}
+
+.dekartSortable {
+	border: 1px solid red; min-height:100px; 
+}
+
+  
+.dekartInputDraggable {
+	border: 1px solid green;
+}
+
+.nameInput {
+	width: 100%;
+}
+
+.dekartFormDragField .deleteDraggable, .dekartFormDragField .nameInput {
+	display: none;
+}

@@ -28,5 +28,24 @@
 	 * Although scripts in the WordPress core, Plugins and Themes may be
 	 * practising this, we should strive to set a better example in our own work.
 	 */
-
+  $( function() {
+    $( "#sortable" ).sortable({
+      revert: true
+    });
+    $( "#draggable" ).draggable({
+      connectToSortable: "#sortable",
+      helper: "clone",
+      revert: "invalid"
+    });
+    $( "ul, li" ).disableSelection();
+	
+	$('body').on( 'click', '.deleteDraggable',  function(){
+		if(!$(this).closest('.dekartFormDragField').length) {
+			$(this).closest('li').remove();
+			
+		}
+	});
+  } );
 })( jQuery );
+
+

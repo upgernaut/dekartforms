@@ -67,6 +67,7 @@ class Dekartforms_Activator {
 			$sql .= "  form_id  int(11)   NOT NULL, ";
 			$sql .= "  name  varchar(255)   NOT NULL, ";
 			$sql .= "  type  varchar(255)   NOT NULL, ";
+			$sql .= "  ord  int(11)   NOT NULL, ";
 			$sql .= "  PRIMARY KEY  id  (id),  "; 
 			$sql .= "  FOREIGN KEY  (form_id)  REFERENCES  " . $table_prefix . "dekart_forms  (id) ";
 			$sql .= "  ON DELETE CASCADE  ";

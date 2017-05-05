@@ -57,24 +57,25 @@ class Dekartforms_Admin {
 	}
 	
 	public function my_admin_menu() {
-		add_menu_page( 'Dekart Forms', 'Dekart Forms', 'manage_options', 'dekartforms', array($this,'dekartforms_router'), 'dashicons-tickets', 25  );
+		add_menu_page( 'Dekart Forms', 'Dekart Forms', 'manage_options', 'dekartforms', array($this,'router'), 'dashicons-tickets', 25  );
 	}
 
-	public function dekartforms_router(){
+	public function router(){
 		$task = filter_input(INPUT_GET, 'task', FILTER_SANITIZE_STRING);
+		$form_id = (filter_input(INPUT_GET, 'form_id', FILTER_SANITIZE_STRING)) ? filter_input(INPUT_GET, 'form_id', FILTER_SANITIZE_STRING) : NULL; 
 		
 		switch($task) {
 			case "add_form": 
-				echo 'add form'; 
+				$this->add_form();
 				break;
 			case "edit_form":
 				echo 'edit';
 				break;
 			case "delete_form":
-				echo 'delete';
+				$this->delete_form($form_id);
 				break;
 			case "form_entries":
-				echo "entries";
+				$this->form_entries($form_id );
 				break;
 			case "single_entry":
 				echo "single";
@@ -85,6 +86,64 @@ class Dekartforms_Admin {
 			default: 
 				$this->show_forms();
 		}
+	}
+	
+	/**
+	 * Delete form
+	 *
+	 * @since    1.0.0
+	 */	
+	public function delete_form($form_id) {
+		global $table_prefix, $wpdb;
+		
+		$table = $table_prefix . 'dekart_forms';
+		$results = $wpdb->delete( $table, array( 'id' => $form_id ));
+
+		?>
+		<script>
+			window.location.href = "<?php echo add_query_arg( array( 'task' => 'return')); ?>"
+		</script>			
+		<?php 
+		exit;
+	}	
+	
+	/**
+	 * Add new form 
+	 *
+	 * @since    1.0.0
+	 */	
+	public function add_form() {
+		
+		global $table_prefix, $wpdb;
+		
+		if($_POST['dekartFormCreate']) {
+
+			$wpdb->insert($table_prefix . 'dekart_forms', array(
+				'title' => $_POST['form_title'],
+			));	
+			
+			
+			foreach($_POST['title'] as $key=>$value) {
+				$fields[] = "({$wpdb->insert_id},'{$value}','type',{$key})";
+			}
+			
+			$fields_str = implode(",\n",$fields);
+			
+			$wpdb->query("INSERT INTO {$table_prefix}dekart_fields
+            (form_id, name, type, ord)
+            VALUES
+            {$fields_str}");	
+			
+			?>
+			<script>
+				window.location.href = "<?php echo add_query_arg( array( 'task' => 'return')); ?>"
+			</script>			
+			<?php 
+			exit;
+						
+		}
+
+		require_once plugin_dir_path( __DIR__ ) . 'admin/partials/dekartforms-admin-add-form.php';
 	}	
 	
 	/**
@@ -94,34 +153,32 @@ class Dekartforms_Admin {
 	 */	
 	public function show_forms() {
 		
-		?>
-		<div class="wrap">
-			<h2>Forms</h2>
-			<table class="widefat" id="testme_admin_list">
-            <thead>
-                <tr>
-                    <th scope="col">ID</th>
-                    <th scope="col">Form</th>
-                    <th scope="col">Actions</th>
-                </tr>
-            </thead>
-            <tbody id="the-list">
-
-                <tr class="alternate">
-					<td>1</td>
-					<td>1</td>
-					<td>
-						<a href="">Entries</a> | 
-						<a href=""><span>Edit</a> | 
-						<a href=""><span>Delete</a>
-					</td>
-				</tr>
-            </tbody>
-        </table>
-		</div>
 		
-		<?php		
+		global $table_prefix, $wpdb;
+		
+		$table = $table_prefix . 'dekart_forms';
+		$results = $wpdb->get_results( 'SELECT * FROM ' . $table, OBJECT );
+
+		require_once plugin_dir_path( __DIR__ ) . 'admin/partials/dekartforms-admin-forms.php';
 	}
+	
+	/**
+	 * Show form list
+	 *
+	 * @since    1.0.0
+	 */	
+	public function form_entries($form_id ) {
+		
+		global $table_prefix, $wpdb;
+		
+		$table = $table_prefix . 'dekart_entries';
+		$form_table = $table_prefix . 'dekart_forms';
+		$form = $wpdb->get_row( 'SELECT * FROM ' . $form_table . ' WHERE id=' . $form_id, OBJECT );
+		
+		$results = $wpdb->get_results( 'SELECT * FROM ' . $table . ' WHERE form_id=' . $form_id, OBJECT );
+
+		require_once plugin_dir_path( __DIR__ ) . 'admin/partials/dekartforms-admin-form-entries.php';
+	}	
 
 	/**
 	 * Register the stylesheets for the admin area.
@@ -166,6 +223,8 @@ class Dekartforms_Admin {
 		 */
 
 		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/dekartforms-admin.js', array( 'jquery' ), $this->version, false );
+		
+		wp_enqueue_script("jquery-effects-core-ui",'https://code.jquery.com/ui/1.12.1/jquery-ui.js', array('jquery'),$this->version, false);	
 
 	}
 
