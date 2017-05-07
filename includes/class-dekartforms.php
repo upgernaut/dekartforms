@@ -75,6 +75,8 @@ class Dekartforms {
 		$this->set_locale();
 		$this->define_admin_hooks();
 		$this->define_public_hooks();
+		
+		$this->router();
 
 	}
 
@@ -210,6 +212,154 @@ class Dekartforms {
 	 */
 	public function get_version() {
 		return $this->version;
+	}
+	
+	public function insert_form() {
+		
+		global $table_prefix, $wpdb;
+		
+		if($_POST['dekartFormCreate']) {
+			$wpdb->insert($table_prefix . 'dekart_forms', array(
+				'title' => $_POST['form_title'],
+			));	
+			
+			foreach($_POST['data'] as  $key=>$value) {
+				$fields[] = "({$wpdb->insert_id},'{$value[name]}', '{$value[label]}', 'text',{$key})";
+			}
+			
+
+			$fields_str = implode(",\n",$fields);
+			
+			$res = $wpdb->query("INSERT INTO {$table_prefix}dekart_fields
+            (form_id, name, label, type, ord)
+            VALUES
+            {$fields_str}");	
+			
+			if($res) {
+				echo json_encode(array('status' => 'success'));
+			}
+
+			exit;
+						
+		}		
+	}
+	
+	public function reorder_fields() {
+		global $table_prefix, $wpdb;
+		
+		foreach($_POST['data'] as  $key=>$value) {
+			$res = $wpdb->update(
+				$table_prefix . 'dekart_fields', 
+				array( 
+					'ord' => $key,	// string
+						// integer (number) 
+				), 
+				array( 'id' => $value['id'] )
+			);
+			
+		}
+		exit;
+	}
+	
+	
+	
+	public function insert_field() {
+		global $table_prefix, $wpdb;
+
+
+		$wpdb->insert($table_prefix . 'dekart_fields', array(
+			'form_id' => $_POST['data']['form_id'],
+			'name' => "",
+			'label' => "",
+			'type' => "text",
+			'ord' => 0
+		));	
+		echo json_encode(array('insert' => $wpdb->insert_id));
+		exit;
+	}
+
+	public function edit_form_name() {
+		global $table_prefix, $wpdb;
+		
+		$form_name = $_POST['form_name'];
+		$form_id = $_POST['form_id'];
+		
+		$res = $wpdb->update(
+			$table_prefix . 'dekart_forms', 
+			array( 
+				'title' => $form_name,
+			), 
+			array( 'id' => $form_id )
+		);
+		exit;
+	}	
+	
+	public function edit_field_name() {
+		global $table_prefix, $wpdb;
+		$fieldname = $_POST['name'];
+		$id = $_POST['id'];
+		// echo '<pre>';
+		// print_r($_POST); 
+		// die;
+		$res = $wpdb->update(
+			$table_prefix . 'dekart_fields', 
+			array( 
+				'name' => $fieldname,
+			), 
+			array( 'id' => $id )
+		);
+		exit;
+	}
+
+	public function edit_field_label() {
+		global $table_prefix, $wpdb;
+		$fieldlabel = $_POST['label'];
+		$id = $_POST['id'];
+		$res = $wpdb->update(
+			$table_prefix . 'dekart_fields', 
+			array( 
+				'label' => $fieldlabel,
+			), 
+			array( 'id' => $id )
+		);
+		exit;
+	}
+
+	public function delete_field() {
+		global $table_prefix, $wpdb;
+		
+		$id = $_POST['id'];
+		
+		$res = $wpdb->delete(
+			$table_prefix . 'dekart_fields', 
+			array( 'id' => $id )
+		);
+		exit;
+	}	
+	
+	public function router() {
+		$task = filter_input(INPUT_GET, 'task', FILTER_SANITIZE_STRING);
+		$form_id = (filter_input(INPUT_GET, 'form_id', FILTER_SANITIZE_STRING)) ? filter_input(INPUT_GET, 'form_id', FILTER_SANITIZE_STRING) : NULL; 
+		
+		switch($task) {
+			case "insert_form": 
+				$this->insert_form();
+				break;
+			case "reorder_fields": 
+				$this->reorder_fields();
+			case "insert_field": 
+				$this->insert_field();
+			case "edit_field_name": 
+				$this->edit_field_name();
+			case "edit_field_label": 
+				$this->edit_field_label();	
+			case "delete_field": 
+				$this->delete_field();
+			case "edit_form_name": 
+				$this->edit_form_name();				
+			default: 
+				
+		}		
 	}
 
 }

@@ -33,7 +33,7 @@
 			<td>
 				<a href="<?php echo add_query_arg( array('form_id' => $single_result->id, 'task' => 'form_entries')); ?>">Entries</a> | 
 				<a href="<?php echo add_query_arg( array('form_id' => $single_result->id, 'task' => 'edit_form')); ?>"><span>Edit</a> | 
-				<a href="<?php echo add_query_arg( array('form_id' => $single_result->id, 'task' => 'delete_form')); ?>"><span>Delete</a>
+				<a onclick="return confirm('Are you sure?')" href="<?php echo add_query_arg( array('form_id' => $single_result->id, 'task' => 'delete_form')); ?>"><span>Delete</a>
 			</td>
 		</tr>
 		<?php endforeach; ?>

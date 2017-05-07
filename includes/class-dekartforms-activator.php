@@ -65,7 +65,8 @@ class Dekartforms_Activator {
 			$sql = "CREATE TABLE ". $wp_track_table . " ( ";
 			$sql .= "  id  int(11)   NOT NULL auto_increment, ";
 			$sql .= "  form_id  int(11)   NOT NULL, ";
-			$sql .= "  name  varchar(255)   NOT NULL, ";
+			$sql .= "  name  varchar(255)  NOT NULL, ";
+			$sql .= "  label  varchar(255)  NOT NULL, ";
 			$sql .= "  type  varchar(255)   NOT NULL, ";
 			$sql .= "  ord  int(11)   NOT NULL, ";
 			$sql .= "  PRIMARY KEY  id  (id),  "; 
@@ -75,7 +76,8 @@ class Dekartforms_Activator {
 			$sql .= ") ENGINE=InnoDB " . $charset_collate . " AUTO_INCREMENT=1 ; ";
 			
 			$res = dbDelta($sql);
-	
+			
+			// var_dump($wpdb->last_error); die;
 		}	
 		
 		$tblname = 'dekart_entries';

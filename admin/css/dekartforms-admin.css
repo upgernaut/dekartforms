@@ -43,6 +43,6 @@ li { margin: 5px; padding: 5px; width: 150px; }
 	width: 100%;
 }
 
-.dekartFormDragField .deleteDraggable, .dekartFormDragField .nameInput {
+.dekartFormDragField .deleteDraggable, .dekartFormDragField .nameInput, .dekartFormDragField .deleteDraggableEdit {
 	display: none;
 }

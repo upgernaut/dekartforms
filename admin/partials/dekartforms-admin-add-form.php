@@ -17,7 +17,8 @@
  
     <?php screen_icon(); ?>
  
-    <h2><?php esc_html_e('Page Title','domain'); ?></h2>
+	<h1 class="wp-heading-inline">Add new form</h1>
+	<hr class="wp-header-end">
  
  
 
@@ -26,13 +27,14 @@
             <div id="post-body" class="metabox-holder columns-<?php echo 1 == get_current_screen()->get_columns() ? '1' : '2'; ?>">
  
                 <div id="post-body-content">
-					<form action="" method="post">
+					<form class="dekartForm" action="" method="post">
 						<input type="hidden" name="dekartFormCreate" value="1">
 						<div class="dekartFormTitle">
-							<input type="text" placeholder="Title" name="form_title">
+							<input type="text" placeholder="Title*" name="form_title">
 						</div>
 						
 						<div class="dekartFormDropField">
+							<h3>Drag a field into red box!</h3>
 							<ul id="sortable" class="dekartSortable">
 		
 							</ul>						
@@ -46,11 +48,13 @@
  
                 <div id="postbox-container-1" class="postbox-container">
 					<div class="dekartFormDragField">
+						<h3>Available fields</h3>
 						<ul>
 							<li id="draggable" class="dekartInputDraggable">
 							
-								<div>Input</div>
-								<input type="text" name="title[]" placeholder="Name*" class="nameInput">
+								<div>Input [type=text]</div>
+								<input type="text" name="title[]" placeholder="Name*" class="nameInput inputTitle">
+								<input type="text" name="label_title[]" placeholder="Label*" class="nameInput inputLabelTitle">
 								<button class="deleteDraggable">delete</button>
 								
 							</li>

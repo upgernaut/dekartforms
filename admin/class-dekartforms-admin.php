@@ -57,7 +57,7 @@ class Dekartforms_Admin {
 	}
 	
 	public function my_admin_menu() {
-		add_menu_page( 'Dekart Forms', 'Dekart Forms', 'manage_options', 'dekartforms', array($this,'router'), 'dashicons-tickets', 25  );
+		add_menu_page( 'Dekart Forms', 'Dekart Forms', 'manage_options', 'dekartforms', array($this,'router'), 'dashicons-feedback', 25  );
 	}
 
 	public function router(){
@@ -69,7 +69,7 @@ class Dekartforms_Admin {
 				$this->add_form();
 				break;
 			case "edit_form":
-				echo 'edit';
+				$this->edit_form($form_id);
 				break;
 			case "delete_form":
 				$this->delete_form($form_id);
@@ -87,6 +87,24 @@ class Dekartforms_Admin {
 				$this->show_forms();
 		}
 	}
+	
+	/**
+	 * Edit form
+	 *
+	 * @since    1.0.0
+	 */	
+	public function edit_form($form_id) {
+		global $table_prefix, $wpdb;
+		
+		$form_table = $table_prefix . 'dekart_forms';		
+		$form = $wpdb->get_row( 'SELECT * FROM ' . $form_table . ' WHERE id=' . $form_id, OBJECT );
+		
+		$fields_table = $table_prefix . 'dekart_fields';		
+		$fields = $wpdb->get_results( 'SELECT * FROM ' . $fields_table . ' WHERE form_id=' . $form_id . ' ORDER BY ord ASC', OBJECT );		
+
+
+		require_once plugin_dir_path( __DIR__ ) . 'admin/partials/dekartforms-admin-edit-form.php';
+	}		
 	
 	/**
 	 * Delete form
@@ -113,36 +131,6 @@ class Dekartforms_Admin {
 	 * @since    1.0.0
 	 */	
 	public function add_form() {
-		
-		global $table_prefix, $wpdb;
-		
-		if($_POST['dekartFormCreate']) {
-
-			$wpdb->insert($table_prefix . 'dekart_forms', array(
-				'title' => $_POST['form_title'],
-			));	
-			
-			
-			foreach($_POST['title'] as $key=>$value) {
-				$fields[] = "({$wpdb->insert_id},'{$value}','type',{$key})";
-			}
-			
-			$fields_str = implode(",\n",$fields);
-			
-			$wpdb->query("INSERT INTO {$table_prefix}dekart_fields
-            (form_id, name, type, ord)
-            VALUES
-            {$fields_str}");	
-			
-			?>
-			<script>
-				window.location.href = "<?php echo add_query_arg( array( 'task' => 'return')); ?>"
-			</script>			
-			<?php 
-			exit;
-						
-		}
-
 		require_once plugin_dir_path( __DIR__ ) . 'admin/partials/dekartforms-admin-add-form.php';
 	}	
 	

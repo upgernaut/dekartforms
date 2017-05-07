@@ -37,6 +37,66 @@
       helper: "clone",
       revert: "invalid"
     });
+	
+    $( "#edit_sortable" ).sortable({
+      revert: true,
+	  update: function(event, ui) {
+			console.log('reorder');
+			reorder();
+
+		}
+    });
+	
+	
+	// Edit form name
+	$('.dekartFormTitle input').keyup(function(){
+			var form_id = $('input[name=dekartFormEdit]').val();
+			var form_name = $(this).val();
+			
+			$.ajax({
+				method: "POST",
+				url: "/wp-admin/admin.php?page=dekartforms&task=edit_form_name",
+				data: {
+					form_id: form_id,
+					form_name: form_name
+					
+				},
+				dataType: "json"
+			}).done(function( data ) {
+				// elem.attr('data-id', data.insert);
+				// reorder();	  
+			});	 		
+		
+	});
+	
+    $( "#edit_draggable" ).draggable({
+      connectToSortable: "#edit_sortable",
+      helper: "clone",
+      revert: "invalid",
+	  stop: function(event, ui) {
+		  //console.log($(ui.helper[0]).attr('class'));
+			var elem = $(ui.helper[0]);
+			var fieldType = 'input';
+			
+			$.ajax({
+				method: "POST",
+				url: "/wp-admin/admin.php?page=dekartforms&task=insert_field",
+				data: {
+					data : { 
+						field: fieldType,
+						form_id: $('input[name=dekartFormEdit]').val()
+					}
+					
+				},
+				dataType: "json"
+			}).done(function( data ) {
+				elem.attr('data-id', data.insert);
+				reorder();	  
+			});	  
+
+		} 
+    });	
+	
     $( "ul, li" ).disableSelection();
 	
 	$('body').on( 'click', '.deleteDraggable',  function(){
@@ -45,7 +105,115 @@
 			
 		}
 	});
+	
+	$('body').on( 'click', '.deleteDraggableEdit',  function(){
+		if (!confirm('Are you sure?') )
+		{
+			return;
+		}
+		
+		if(!$(this).closest('.dekartFormDragField').length) {
+			var elem = $(this).closest('.dekartInputDraggable').attr('data-id');
+			$.ajax({
+				method: "POST",
+				url: "/wp-admin/admin.php?page=dekartforms&task=delete_field",
+				data : {
+					id: elem,
+				},
+				dataType: "json"
+			});			
+			
+			$.when( $(this).closest('li').remove()).then( reorder() );
+			
+		}
+	});	
+	
+	$('body').on( 'keyup', '.nameInputEdit',  function(){
+		var elem = $(this).closest('.dekartInputDraggable').attr('data-id');
+		
+		$.ajax({
+			method: "POST",
+			url: "/wp-admin/admin.php?page=dekartforms&task=edit_field_name",
+			data : {
+				id: elem,
+				name: $(this).val()
+			
+			},
+			dataType: "json"
+		});
+	});	
+	
+	$('body').on( 'keyup', '.inputLabelTitleEdit',  function(){
+		var elem = $(this).closest('.dekartInputDraggable').attr('data-id');
+		
+		$.ajax({
+			method: "POST",
+			url: "/wp-admin/admin.php?page=dekartforms&task=edit_field_label",
+			data : {
+				id: elem,
+				label: $(this).val()
+			
+			},
+			dataType: "json"
+		});
+	});		
+	
+	
+	
+	$('.dekartForm').submit(function(e){
+		e.preventDefault();
+		var inputsJSON = [];
+		$(this).find('.dekartInputDraggable').each(function(){
+			var tempArr = {
+				'name' : $(this).find(".inputTitle").val(),
+				'label' : $(this).find(".inputLabelTitle").val(),
+			};
+			
+			inputsJSON.push(tempArr);
+		});
+		
+		$.ajax({
+		  method: "POST",
+		  url: "/wp-admin/admin.php?page=dekartforms&task=insert_form",
+		  data: {
+				form_title: $('.dekartFormTitle input').val(),
+				dekartFormCreate: 1,
+				data : inputsJSON,
+			},
+		  dataType: "json"
+		}).done(function( data ) {
+			  if(data.status == "success") {
+				window.location.href = "/wp-admin/admin.php?page=dekartforms&task=return";
+			  }
+		});
+		
+	});
   } );
+  
+	function reorder() {
+
+		var newOrder = [];
+		$('.dekartFormDropField .dekartInputDraggable').each(function(){
+			var tempArr = {
+				'id' : $(this).attr("data-id")
+			};
+
+			newOrder.push(tempArr);
+		});		
+
+
+		$.ajax({
+			method: "POST",
+			url: "/wp-admin/admin.php?page=dekartforms&task=reorder_fields",
+			data: {
+				data : newOrder,
+			},
+			dataType: "json"
+		});			
+	}  
+	
 })( jQuery );
+
+
 
 
