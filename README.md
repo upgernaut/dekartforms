@@ -1,4 +1,4 @@
-# Dekart Fors
+# Dekart Forms
 
 ##### The plugin works with WordPress, the functionality includes adding an additional forms using shortcode into any page or post
 
