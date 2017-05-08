@@ -63,6 +63,7 @@ class Dekartforms_Admin {
 	public function router(){
 		$task = filter_input(INPUT_GET, 'task', FILTER_SANITIZE_STRING);
 		$form_id = (filter_input(INPUT_GET, 'form_id', FILTER_SANITIZE_STRING)) ? filter_input(INPUT_GET, 'form_id', FILTER_SANITIZE_STRING) : NULL; 
+		$entry_id = (filter_input(INPUT_GET, 'entry_id', FILTER_SANITIZE_STRING)) ? filter_input(INPUT_GET, 'entry_id', FILTER_SANITIZE_STRING) : NULL; 
 		
 		switch($task) {
 			case "add_form": 
@@ -78,10 +79,7 @@ class Dekartforms_Admin {
 				$this->form_entries($form_id );
 				break;
 			case "single_entry":
-				echo "single";
-				break;
-			case "delete_entry":
-				echo 'delete entry';
+				$this->single_entry($entry_id );
 				break;
 			default: 
 				$this->show_forms();
@@ -149,6 +147,31 @@ class Dekartforms_Admin {
 
 		require_once plugin_dir_path( __DIR__ ) . 'admin/partials/dekartforms-admin-forms.php';
 	}
+	
+	/**
+	 * Show form list
+	 *
+	 * @since    1.0.0
+	 */	
+	public function single_entry($entry_id ) {
+		
+		global $table_prefix, $wpdb;
+		
+		$table = $table_prefix . 'dekart_entries_fields';
+		$entries_fields = $wpdb->get_results( 'SELECT * FROM ' . $table . ' WHERE entry_id=' . $entry_id, OBJECT  );
+		
+		
+		
+		foreach($entries_fields as $single_entry_field) {
+			$field = $wpdb->get_row( 'SELECT * FROM ' .$table_prefix . 'dekart_fields' . ' WHERE id=' . $single_entry_field->field_id, OBJECT );
+			
+			$fields[$field->id] = $field->label;
+			
+			
+		}
+
+		require_once plugin_dir_path( __DIR__ ) . 'admin/partials/dekartforms-admin-single-entry.php';
+	}	
 	
 	/**
 	 * Show form list

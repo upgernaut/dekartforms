@@ -31,7 +31,8 @@
 			<td><?php echo $single_result->form_id; ?></td>
 			<td><?php echo $single_result->submitted; ?></td>
 			<td>
-				<a href="<?php echo add_query_arg( array('entry_id' => $single_result->id, 'task' => 'delete_entry')); ?>"><span>Delete</a>
+				<a href="<?php echo add_query_arg( array('entry_id' => $single_result->id, 'task' => 'single_entry')); ?>"><span>Show</a> |
+				<a onclick="return confirm('Are you sure?')" href="<?php echo add_query_arg( array('entry_id' => $single_result->id, 'task' => 'delete_entry')); ?>"><span>Delete</a>
 			</td>
 		</tr>
 		<?php endforeach; ?>

@@ -28,5 +28,21 @@
 	 * Although scripts in the WordPress core, Plugins and Themes may be
 	 * practising this, we should strive to set a better example in our own work.
 	 */
+	 
+	/* Dekart form submission using ajax */
+	$( function() {
+		
+		$('.dekartFormFront').submit(function(e) { 
+			e.preventDefault();
+			var $this = $(this);
+			var options = { 
+				success: function(){
+					$this.html('<div style="color: green; font-size: 24px;">Thank you for you submission.</div>');
+				}
+			}; 		
+			$(this).ajaxSubmit(options); 
+			return false; 
+		});
 
+	});
 })( jQuery );
