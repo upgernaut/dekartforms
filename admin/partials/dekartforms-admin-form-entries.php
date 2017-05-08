@@ -19,7 +19,6 @@
 	<thead>
 		<tr>
 			<th scope="col">ID</th>
-			<th scope="col">Form</th>
 			<th scope="col">Submitted</th>
 			<th scope="col">Actions</th>
 		</tr>
@@ -28,7 +27,6 @@
 		<?php foreach($results as $single_result): ?>
 		<tr class="alternate">
 			<td><a href="<?php echo add_query_arg( array('entry_id' => $single_result->id, 'task' => 'single_entry')); ?>"><?php echo $single_result->id; ?></td>
-			<td><?php echo $single_result->form_id; ?></td>
 			<td><?php echo $single_result->submitted; ?></td>
 			<td>
 				<a href="<?php echo add_query_arg( array('entry_id' => $single_result->id, 'task' => 'single_entry')); ?>"><span>Show</a> |

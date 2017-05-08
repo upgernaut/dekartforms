@@ -53,7 +53,6 @@
 							<li id="draggable" class="dekartInputDraggable">
 							
 								<div>Input [type=text]</div>
-								<input type="text" name="title[]" placeholder="Name*" class="nameInput inputTitle">
 								<input type="text" name="label_title[]" placeholder="Label*" class="nameInput inputLabelTitle">
 								<button class="deleteDraggable">delete</button>
 								

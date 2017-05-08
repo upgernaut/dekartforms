@@ -46,3 +46,12 @@ li { margin: 5px; padding: 5px; width: 150px; }
 .dekartFormDragField .deleteDraggable, .dekartFormDragField .nameInput, .dekartFormDragField .deleteDraggableEdit {
 	display: none;
 }
+
+.dekartFormEditStatus {
+	font-size: 20px;
+	color: green;
+}
+
+.dekartFormEditStatus.loading {
+	color: red;
+}

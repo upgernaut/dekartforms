@@ -32,7 +32,9 @@
 		<tr class="alternate">
 			<td><?php echo $single_result->id; ?></td>
 			<td><?php echo $single_result->title; ?></td>
-			<td><?php echo '[dekartform form="'.$single_result->id.'"]'; ?></td>
+			<td><?php echo '[dekartform form="'.$single_result->id.'"]'; ?><br />
+			<?php echo htmlspecialchars("<?php echo do_shortcode( '[dekartform form=\"".$single_result->id."\"]' ); ?>"); ?>
+			</td>
 			<td>
 				<a href="<?php echo add_query_arg( array('form_id' => $single_result->id, 'task' => 'form_entries')); ?>">Entries</a> | 
 				<a href="<?php echo add_query_arg( array('form_id' => $single_result->id, 'task' => 'edit_form')); ?>"><span>Edit</a> | 

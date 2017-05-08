@@ -17,7 +17,7 @@
  
     <?php screen_icon(); ?>
  
-		<h1 class="wp-heading-inline">Add new form</h1>
+		<h1 class="wp-heading-inline">Edit form</h1>
 		<hr class="wp-header-end">
         <div id="poststuff">
             <div id="post-body" class="metabox-holder columns-<?php echo 1 == get_current_screen()->get_columns() ? '1' : '2'; ?>">
@@ -30,11 +30,11 @@
 						
 						<div class="dekartFormDropField">
 							<h3>Drag a field into the red box or reorder existing!</h3>
+							<div class="dekartFormEditStatus"></div>
 							<ul id="edit_sortable" class="dekartSortable">
 							<?php foreach($fields as $single_field): ?>
 							<li class="dekartInputDraggable" data-id="<?php echo $single_field->id; ?>">
 								<div>Input [type=text]</div>
-								<input type="text" name="field[<?php echo $single_field->id; ?>][name]" placeholder="Name*" value="<?php echo $single_field->name; ?>"  class="nameInputEdit">
 								<input type="text" name="label_title[]" placeholder="Label*" class="nameInput inputLabelTitle inputLabelTitleEdit" value="<?php echo $single_field->label; ?>">
 								<button class="deleteDraggableEdit">delete</button>
 							</li>
@@ -44,7 +44,7 @@
 						</div>
 						
 						<div class="dekartFormDropSubmit">
-							<button type="submit">Edit form</button>
+							Edits are being saved automatically
 						</div>
 					</form>
                 </div>
@@ -56,7 +56,6 @@
 							<li id="edit_draggable" class="dekartInputDraggable">
 							
 								<div>Input [type=text]</div>
-								<input type="text" name="name[]" placeholder="Name*" class="nameInput nameInputEdit">
 								<input type="text" name="label_title[]" placeholder="Label*" class="nameInput inputLabelTitle inputLabelTitleEdit">
 								<button class="deleteDraggableEdit">delete</button>
 								

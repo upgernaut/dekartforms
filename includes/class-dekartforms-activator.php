@@ -65,7 +65,6 @@ class Dekartforms_Activator {
 			$sql = "CREATE TABLE ". $wp_track_table . " ( ";
 			$sql .= "  id  int(11)   NOT NULL auto_increment, ";
 			$sql .= "  form_id  int(11)   NOT NULL, ";
-			$sql .= "  name  varchar(255)  NOT NULL, ";
 			$sql .= "  label  varchar(255)  NOT NULL, ";
 			$sql .= "  type  varchar(255)   NOT NULL, ";
 			$sql .= "  ord  int(11)   NOT NULL, ";

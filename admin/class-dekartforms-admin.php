@@ -52,14 +52,17 @@ class Dekartforms_Admin {
 		$this->plugin_name = $plugin_name;
 		$this->version = $version;
 		
+		// Calling the menu page initialization function
 		add_action( 'admin_menu', array($this,'my_admin_menu') );
 
 	}
 	
+	// Adding a menu page
 	public function my_admin_menu() {
 		add_menu_page( 'Dekart Forms', 'Dekart Forms', 'manage_options', 'dekartforms', array($this,'router'), 'dashicons-feedback', 25  );
 	}
 
+	// Router function delegating different actions
 	public function router(){
 		$task = filter_input(INPUT_GET, 'task', FILTER_SANITIZE_STRING);
 		$form_id = (filter_input(INPUT_GET, 'form_id', FILTER_SANITIZE_STRING)) ? filter_input(INPUT_GET, 'form_id', FILTER_SANITIZE_STRING) : NULL; 
@@ -124,7 +127,7 @@ class Dekartforms_Admin {
 	}	
 	
 	/**
-	 * Add new form 
+	 * Add a new form 
 	 *
 	 * @since    1.0.0
 	 */	
@@ -133,7 +136,7 @@ class Dekartforms_Admin {
 	}	
 	
 	/**
-	 * Show form list
+	 * Show the list with all forms
 	 *
 	 * @since    1.0.0
 	 */	
@@ -149,7 +152,7 @@ class Dekartforms_Admin {
 	}
 	
 	/**
-	 * Show form list
+	 * Show the single entry
 	 *
 	 * @since    1.0.0
 	 */	
@@ -157,9 +160,10 @@ class Dekartforms_Admin {
 		
 		global $table_prefix, $wpdb;
 		
+		$entry = $wpdb->get_row( 'SELECT * FROM ' .$table_prefix . 'dekart_entries' . ' WHERE id=' . $entry_id, OBJECT );
+		
 		$table = $table_prefix . 'dekart_entries_fields';
 		$entries_fields = $wpdb->get_results( 'SELECT * FROM ' . $table . ' WHERE entry_id=' . $entry_id, OBJECT  );
-		
 		
 		
 		foreach($entries_fields as $single_entry_field) {
@@ -167,14 +171,13 @@ class Dekartforms_Admin {
 			
 			$fields[$field->id] = $field->label;
 			
-			
 		}
 
 		require_once plugin_dir_path( __DIR__ ) . 'admin/partials/dekartforms-admin-single-entry.php';
 	}	
 	
 	/**
-	 * Show form list
+	 * Show all entries of particular form
 	 *
 	 * @since    1.0.0
 	 */	

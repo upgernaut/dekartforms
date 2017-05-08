@@ -1,37 +1,12 @@
 (function( $ ) {
 	'use strict';
 
-	/**
-	 * All of the code for your admin-facing JavaScript source
-	 * should reside in this file.
-	 *
-	 * Note: It has been assumed you will write jQuery code here, so the
-	 * $ function reference has been prepared for usage within the scope
-	 * of this function.
-	 *
-	 * This enables you to define handlers, for when the DOM is ready:
-	 *
-	 * $(function() {
-	 *
-	 * });
-	 *
-	 * When the window is loaded:
-	 *
-	 * $( window ).load(function() {
-	 *
-	 * });
-	 *
-	 * ...and/or other possibilities.
-	 *
-	 * Ideally, it is not considered best practise to attach more than a
-	 * single DOM-ready or window-load handler for a particular page.
-	 * Although scripts in the WordPress core, Plugins and Themes may be
-	 * practising this, we should strive to set a better example in our own work.
-	 */
   $( function() {
+	// jQuery UI
     $( "#sortable" ).sortable({
       revert: true
     });
+	
     $( "#draggable" ).draggable({
       connectToSortable: "#sortable",
       helper: "clone",
@@ -41,12 +16,10 @@
     $( "#edit_sortable" ).sortable({
       revert: true,
 	  update: function(event, ui) {
-			console.log('reorder');
+			// Call a reorder function
 			reorder();
-
 		}
     });
-	
 	
 	// Edit form name
 	$('.dekartFormTitle input').keyup(function(){
@@ -69,15 +42,15 @@
 		
 	});
 	
+	// Adding a field
     $( "#edit_draggable" ).draggable({
       connectToSortable: "#edit_sortable",
       helper: "clone",
       revert: "invalid",
 	  stop: function(event, ui) {
-		  //console.log($(ui.helper[0]).attr('class'));
 			var elem = $(ui.helper[0]);
 			var fieldType = 'input';
-			
+			editStatus(true);
 			$.ajax({
 				method: "POST",
 				url: "/wp-admin/admin.php?page=dekartforms&task=insert_field",
@@ -91,6 +64,7 @@
 				dataType: "json"
 			}).done(function( data ) {
 				elem.attr('data-id', data.insert);
+				editStatus(false);
 				reorder();	  
 			});	  
 
@@ -99,19 +73,20 @@
 	
     $( "ul, li" ).disableSelection();
 	
+	// Delete a field in add form page
 	$('body').on( 'click', '.deleteDraggable',  function(){
 		if(!$(this).closest('.dekartFormDragField').length) {
 			$(this).closest('li').remove();
-			
 		}
 	});
 	
+	// Delete a field in edit form page
 	$('body').on( 'click', '.deleteDraggableEdit',  function(){
 		if (!confirm('Are you sure?') )
 		{
 			return;
 		}
-		
+		editStatus(true);
 		if(!$(this).closest('.dekartFormDragField').length) {
 			var elem = $(this).closest('.dekartInputDraggable').attr('data-id');
 			$.ajax({
@@ -121,6 +96,8 @@
 					id: elem,
 				},
 				dataType: "json"
+			}).done(function(){
+				editStatus(false);
 			});			
 			
 			$.when( $(this).closest('li').remove()).then( reorder() );
@@ -128,22 +105,9 @@
 		}
 	});	
 	
-	$('body').on( 'keyup', '.nameInputEdit',  function(){
-		var elem = $(this).closest('.dekartInputDraggable').attr('data-id');
-		
-		$.ajax({
-			method: "POST",
-			url: "/wp-admin/admin.php?page=dekartforms&task=edit_field_name",
-			data : {
-				id: elem,
-				name: $(this).val()
-			
-			},
-			dataType: "json"
-		});
-	});	
-	
+	// Edit a label in edit form page
 	$('body').on( 'keyup', '.inputLabelTitleEdit',  function(){
+		editStatus(true);
 		var elem = $(this).closest('.dekartInputDraggable').attr('data-id');
 		
 		$.ajax({
@@ -155,11 +119,12 @@
 			
 			},
 			dataType: "json"
+		}).done(function(){
+			editStatus(false);
 		});
 	});		
 	
-	
-	
+	// Add a form
 	$('.dekartForm').submit(function(e){
 		e.preventDefault();
 		var inputsJSON = [];
@@ -188,10 +153,12 @@
 		});
 		
 	});
-  } );
+  }); // DOM ready
   
+  
+	// Reorder function (being called almost after all dekart form functions)
 	function reorder() {
-
+		editStatus(true);
 		var newOrder = [];
 		$('.dekartFormDropField .dekartInputDraggable').each(function(){
 			var tempArr = {
@@ -209,11 +176,21 @@
 				data : newOrder,
 			},
 			dataType: "json"
+		}).done(function(){
+			editStatus(false);
+			
 		});			
 	}  
 	
-	
-
+	// Functions shows that user changes are being saved
+	function editStatus(loading) {
+		if(loading) {
+			$('.dekartFormEditStatus').addClass('loading').html('Loading');
+		} else {
+			$('.dekartFormEditStatus').removeClass('loading').html('Saved');
+			
+		}
+	}
 	
 })( jQuery );
 

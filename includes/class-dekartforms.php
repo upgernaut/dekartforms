@@ -76,13 +76,18 @@ class Dekartforms {
 		$this->define_admin_hooks();
 		$this->define_public_hooks();
 		
+		// Call router
 		$this->router();
 		
+		// Adding shortcode into WordPress
 		add_shortcode('dekartform', array($this,'dekartform_shortcode'));
 		
+		// Triggering submission function
 		$this->dekartform_submission();
 	}
 	
+	
+	// Dekartform shortcode
 	public function dekartform_shortcode($data=null) {
 		global $table_prefix, $wpdb;
 		
@@ -108,6 +113,7 @@ class Dekartforms {
 		}
 	}
 	
+	// Doing what is needed after form submission
 	public function dekartform_submission() {
 		global $table_prefix, $wpdb;
 		
@@ -263,6 +269,7 @@ class Dekartforms {
 		return $this->version;
 	}
 	
+	// Add a form for dekart forms
 	public function insert_form() {
 		
 		global $table_prefix, $wpdb;
@@ -273,14 +280,14 @@ class Dekartforms {
 			));	
 			
 			foreach($_POST['data'] as  $key=>$value) {
-				$fields[] = "({$wpdb->insert_id},'{$value[name]}', '{$value[label]}', 'text',{$key})";
+				$fields[] = "({$wpdb->insert_id}, '{$value[label]}', 'text',{$key})";
 			}
 			
 
 			$fields_str = implode(",\n",$fields);
 			
 			$res = $wpdb->query("INSERT INTO {$table_prefix}dekart_fields
-            (form_id, name, label, type, ord)
+            (form_id, label, type, ord)
             VALUES
             {$fields_str}");	
 			
@@ -293,6 +300,7 @@ class Dekartforms {
 		}		
 	}
 	
+	// Reorderind fields
 	public function reorder_fields() {
 		global $table_prefix, $wpdb;
 		
@@ -310,15 +318,13 @@ class Dekartforms {
 		exit;
 	}
 	
-	
-	
+	// Insert a new field
 	public function insert_field() {
 		global $table_prefix, $wpdb;
 
 
 		$wpdb->insert($table_prefix . 'dekart_fields', array(
 			'form_id' => $_POST['data']['form_id'],
-			'name' => "",
 			'label' => "",
 			'type' => "text",
 			'ord' => 0
@@ -327,6 +333,8 @@ class Dekartforms {
 		exit;
 	}
 
+	
+	// Edit form title
 	public function edit_form_name() {
 		global $table_prefix, $wpdb;
 		
@@ -343,20 +351,8 @@ class Dekartforms {
 		exit;
 	}	
 	
-	public function edit_field_name() {
-		global $table_prefix, $wpdb;
-		$fieldname = $_POST['name'];
-		$id = $_POST['id'];
-		$res = $wpdb->update(
-			$table_prefix . 'dekart_fields', 
-			array( 
-				'name' => ($fieldname == "name") ? $fieldname . "_{$id}" : $fieldname,
-			), 
-			array( 'id' => $id )
-		);
-		exit;
-	}
-
+	
+	// Edit single field label
 	public function edit_field_label() {
 		global $table_prefix, $wpdb;
 		$fieldlabel = $_POST['label'];
@@ -371,6 +367,8 @@ class Dekartforms {
 		exit;
 	}
 
+	
+	// Delete a field
 	public function delete_field() {
 		global $table_prefix, $wpdb;
 		
@@ -383,6 +381,8 @@ class Dekartforms {
 		exit;
 	}
 
+	
+	// Delete an entry
 	public function delete_entry() {
 		global $table_prefix, $wpdb;
 		
@@ -400,6 +400,8 @@ class Dekartforms {
 		exit;
 	}	
 	
+	
+	// Router function that delegate functionality
 	public function router() {
 		$task = filter_input(INPUT_GET, 'task', FILTER_SANITIZE_STRING);
 		$form_id = (filter_input(INPUT_GET, 'form_id', FILTER_SANITIZE_STRING)) ? filter_input(INPUT_GET, 'form_id', FILTER_SANITIZE_STRING) : NULL; 
@@ -413,9 +415,6 @@ class Dekartforms {
 				break;
 			case "insert_field": 
 				$this->insert_field();
-				break;
-			case "edit_field_name": 
-				$this->edit_field_name();
 				break;
 			case "edit_field_label": 
 				$this->edit_field_label();
