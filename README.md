@@ -1,5 +1,5 @@
 # Dekart Forms
-
+##### Form plugin for testing purposes
 ##### The plugin works with WordPress, the functionality includes adding an additional forms using shortcode into any page or post
 
 1. Just copy the plugin into your plugins folder
